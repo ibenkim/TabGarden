@@ -31,12 +31,15 @@ stopBtn.onclick = () => {
   clearInterval(timer);
   const elapsed = Date.now() - startTime;
 
-  const newPlant = document.createElement("img");
-  newPlant.src = "assets/plant1.png"; // replace with your actual plant image
-  newPlant.alt = "Plant";
-  newPlant.width = 64;
-  newPlant.className = "plant";
+  //const newPlant = document.createElement("img");
+  //newPlant.src = "assets/plant1.png"; // replace with your actual plant image
+  //newPlant.alt = "Plant";
+  //newPlant.width = 64;
+  //newPlant.className = "plant";
 
+  const newPlant = document.createElement("div");
+  newPlant.textContent = "🌿";  // temporary plant emoji
+  newPlant.className = "text-3xl plant";
   gardenEl.appendChild(newPlant);
 
   savePlant();
@@ -53,11 +56,14 @@ function savePlant() {
 function loadGarden() {
   chrome.storage.sync.get(["plantCount"], ({ plantCount }) => {
     for (let i = 0; i < (plantCount || 0); i++) {
-      const plant = document.createElement("img");
-      plant.src = "assets/plant1.png";
-      plant.alt = "Plant";
-      plant.width = 64;
-      plant.className = "plant";
+      //const plant = document.createElement("img");
+      //plant.src = "assets/plant1.png";
+      //plant.alt = "Plant";
+      //plant.width = 64;
+      //plant.className = "plant";
+      const plant = document.createElement("div");
+      plant.textContent = "🌿";
+      plant.className = "text-3xl plant";
       gardenEl.appendChild(plant);
     }
   });
