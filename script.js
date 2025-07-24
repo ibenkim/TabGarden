@@ -1,5 +1,6 @@
 let startBtn = document.getElementById("start");
 let stopBtn = document.getElementById("stop");
+let clearBtn = document.getElementById("clear");
 let timeEl = document.getElementById("time");
 let gardenEl = document.getElementById("garden");
 
@@ -46,6 +47,10 @@ stopBtn.onclick = () => {
 
   stopBtn.classList.add("hidden");
   startBtn.classList.remove("hidden");
+};
+
+clearBtn.onclick = () => {
+  gardenEl.replaceChildren();
 };
 
 function savePlant() {
