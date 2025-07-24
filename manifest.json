@@ -6,7 +6,7 @@
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage"]
 //  "icons": {
 //    "128": "assets/icon128.png"
 //  }
