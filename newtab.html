@@ -4,26 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TabGarden</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="bg-green-100 flex items-center justify-center min-h-screen font-sans">
-    <div class="text-center">
-      <h1 class="text-3xl font-bold mb-4">🌱 TabGarden</h1>
+  <body>
+    <div id="container">
+      <h1>🌱 TabGarden</h1>
 
-      <div id="timer" class="text-lg mb-2">Time Focused: <span id="time">00:00:00</span></div>
+      <div id="timer">Time Focused: <span id="time">00:00:00</span></div>
 
-      <button id="start" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mb-4">
-        Start Focus
-      </button>
-      <button id="stop" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded mb-4 hidden">
-        Stop Focus
-      </button>
-      <button id="clear" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mb-4">
-        Clear
-      </button>
+      <div id="buttons">
+        <button id="start">Start Focus</button>
+        <button id="stop" class="hidden">Stop Focus</button>
+        <button id="clear">Clear</button>
+      </div>
 
-      <div id="garden" class="mt-6 flex flex-wrap gap-4 justify-center max-w-md">
+      <div id="garden">
         <!-- Plants will appear here -->
       </div>
     </div>
