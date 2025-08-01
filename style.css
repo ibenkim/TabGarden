@@ -9,6 +9,17 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  max-width: 1440px;
+  margin: auto;
+  overflow-x: hidden;
+}
+
 .plant {
   animation: grow 0.5s ease-out;
 }
