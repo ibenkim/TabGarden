@@ -1,77 +1,118 @@
-let startBtn = document.getElementById("start");
-let stopBtn = document.getElementById("stop");
-let clearBtn = document.getElementById("clear");
-let timeEl = document.getElementById("time");
-let gardenEl = document.getElementById("garden");
+let startTime = null;
+let intervalId = null;
+let elapsedTime = 0;
+let plantCount = 0;
 
-let timer;
-let startTime;
+const timerDisplay = document.getElementById("time");
+const startBtn = document.getElementById("start");
+const stopBtn = document.getElementById("stop");
+const clearBtn = document.getElementById("clear");
+const garden = document.getElementById("garden");
 
 function formatTime(ms) {
-  const totalSec = Math.floor(ms / 1000);
-  const hrs = String(Math.floor(totalSec / 3600)).padStart(2, '0');
-  const mins = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
-  const secs = String(totalSec % 60).padStart(2, '0');
-  return `${hrs}:${mins}:${secs}`;
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+  const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
 }
 
-function updateTime() {
+function addPlant() {
+  const plant = document.createElement("div");
+  plant.textContent = "🌿";
+  plant.className = "text-2xl plant";
+  garden.appendChild(plant);
+}
+
+function updateTimer() {
   const now = Date.now();
-  const elapsed = now - startTime;
-  timeEl.textContent = formatTime(elapsed);
+  const totalElapsed = elapsedTime + (now - startTime);
+  timerDisplay.textContent = formatTime(totalElapsed);
+
+  const newPlantCount = Math.floor(totalElapsed / 5000); // every 5 seconds
+  if (newPlantCount > plantCount) {
+    for (let i = plantCount; i < newPlantCount; i++) {
+      addPlant();
+    }
+    plantCount = newPlantCount;
+  }
+
+  // Save state
+  localStorage.setItem("startTime", startTime);
+  localStorage.setItem("elapsedTime", elapsedTime);
+  localStorage.setItem("plantCount", plantCount);
 }
 
-startBtn.onclick = () => {
+startBtn.addEventListener("click", () => {
+  if (intervalId !== null) return;
+
   startTime = Date.now();
-  timer = setInterval(updateTime, 1000);
+  intervalId = setInterval(updateTimer, 1000);
+  updateTimer();
+
   startBtn.classList.add("hidden");
   stopBtn.classList.remove("hidden");
-};
+});
 
-stopBtn.onclick = () => {
-  clearInterval(timer);
-  const elapsed = Date.now() - startTime;
+stopBtn.addEventListener("click", () => {
+  if (intervalId === null) return;
 
-  //const newPlant = document.createElement("img");
-  //newPlant.src = "assets/plant1.png"; // replace with your actual plant image
-  //newPlant.alt = "Plant";
-  //newPlant.width = 64;
-  //newPlant.className = "plant";
+  clearInterval(intervalId);
+  intervalId = null;
 
-  const newPlant = document.createElement("div");
-  newPlant.textContent = "🌿";  // temporary plant emoji
-  newPlant.className = "text-3xl plant";
-  gardenEl.appendChild(newPlant);
+  // Add time before stopping
+  elapsedTime += Date.now() - startTime;
+  startTime = null;
 
-  savePlant();
-
-  stopBtn.classList.add("hidden");
   startBtn.classList.remove("hidden");
-};
+  stopBtn.classList.add("hidden");
 
-clearBtn.onclick = () => {
-  gardenEl.replaceChildren();
-};
+  localStorage.setItem("elapsedTime", elapsedTime);
+  localStorage.setItem("plantCount", plantCount);
+  localStorage.removeItem("startTime");
+});
 
-function savePlant() {
-  const count = gardenEl.children.length;
-  chrome.storage.sync.set({ plantCount: count });
-}
+clearBtn.addEventListener("click", () => {
+  if (intervalId !== null) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
 
-function loadGarden() {
-  chrome.storage.sync.get(["plantCount"], ({ plantCount }) => {
-    for (let i = 0; i < (plantCount || 0); i++) {
-      //const plant = document.createElement("img");
-      //plant.src = "assets/plant1.png";
-      //plant.alt = "Plant";
-      //plant.width = 64;
-      //plant.className = "plant";
-      const plant = document.createElement("div");
-      plant.textContent = "🌿";
-      plant.className = "text-3xl plant";
-      gardenEl.appendChild(plant);
-    }
-  });
-}
+  startTime = null;
+  elapsedTime = 0;
+  plantCount = 0;
+  timerDisplay.textContent = "00:00:00";
+  garden.innerHTML = "";
 
-loadGarden();
+  localStorage.clear();
+
+  startBtn.classList.remove("hidden");
+  stopBtn.classList.add("hidden");
+});
+
+// On load — restore previous state
+window.addEventListener("DOMContentLoaded", () => {
+  const savedElapsed = parseInt(localStorage.getItem("elapsedTime")) || 0;
+  const savedStart = parseInt(localStorage.getItem("startTime"));
+  const savedPlantCount = parseInt(localStorage.getItem("plantCount")) || 0;
+
+  elapsedTime = savedElapsed;
+  plantCount = 0; // We'll recalculate and re-render below
+
+  // Rebuild the garden
+  const totalElapsed = savedStart ? savedElapsed + (Date.now() - savedStart) : savedElapsed;
+  const restoredPlantCount = Math.floor(totalElapsed / 5000);
+  for (let i = 0; i < restoredPlantCount; i++) addPlant();
+  plantCount = restoredPlantCount;
+
+  // Update timer
+  timerDisplay.textContent = formatTime(totalElapsed);
+
+  if (savedStart) {
+    startTime = Date.now() - (Date.now() - savedStart);
+    intervalId = setInterval(updateTimer, 1000);
+    startBtn.classList.add("hidden");
+    stopBtn.classList.remove("hidden");
+  }
+});
+
