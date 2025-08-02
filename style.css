@@ -1,7 +1,17 @@
+@keyframes grow {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   overflow-x: hidden;
   font-family: 'Segoe UI', sans-serif;
@@ -26,6 +36,10 @@ h1 {
   text-align: center;
 }
 
+#buttons {
+  text-align: center;
+}
+
 button {
   background-color: #66bb6a;
   color: white;
@@ -47,14 +61,23 @@ button:hover {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
-  max-width: 600px;
+  gap: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .plant {
   animation: grow 0.5s ease-out;
   font-size: 2rem;
-  transition: transform 0.3s;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+  flex: 0 0 auto;
+  transition: transform 0.3s ease;
 }
 
 .plant:hover {
