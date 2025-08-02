@@ -29,7 +29,7 @@ function updateTimer() {
   const totalElapsed = elapsedTime + (now - startTime);
   timerDisplay.textContent = formatTime(totalElapsed);
 
-  const newPlantCount = Math.floor(totalElapsed / 5000); // every 5 seconds
+  const newPlantCount = Math.floor(totalElapsed / 5000);
   if (newPlantCount > plantCount) {
     for (let i = plantCount; i < newPlantCount; i++) {
       addPlant();
@@ -37,7 +37,7 @@ function updateTimer() {
     plantCount = newPlantCount;
   }
 
-  // Save state
+  //save
   localStorage.setItem("startTime", startTime);
   localStorage.setItem("elapsedTime", elapsedTime);
   localStorage.setItem("plantCount", plantCount);
@@ -45,28 +45,21 @@ function updateTimer() {
 
 startBtn.addEventListener("click", () => {
   if (intervalId !== null) return;
-
   startTime = Date.now();
   intervalId = setInterval(updateTimer, 1000);
   updateTimer();
-
   startBtn.classList.add("hidden");
   stopBtn.classList.remove("hidden");
 });
 
 stopBtn.addEventListener("click", () => {
   if (intervalId === null) return;
-
   clearInterval(intervalId);
   intervalId = null;
-
-  // Add time before stopping
   elapsedTime += Date.now() - startTime;
   startTime = null;
-
   startBtn.classList.remove("hidden");
   stopBtn.classList.add("hidden");
-
   localStorage.setItem("elapsedTime", elapsedTime);
   localStorage.setItem("plantCount", plantCount);
   localStorage.removeItem("startTime");
@@ -90,22 +83,19 @@ clearBtn.addEventListener("click", () => {
   stopBtn.classList.add("hidden");
 });
 
-// On load — restore previous state
 window.addEventListener("DOMContentLoaded", () => {
   const savedElapsed = parseInt(localStorage.getItem("elapsedTime")) || 0;
   const savedStart = parseInt(localStorage.getItem("startTime"));
   const savedPlantCount = parseInt(localStorage.getItem("plantCount")) || 0;
 
   elapsedTime = savedElapsed;
-  plantCount = 0; // We'll recalculate and re-render below
+  plantCount = 0;
 
-  // Rebuild the garden
   const totalElapsed = savedStart ? savedElapsed + (Date.now() - savedStart) : savedElapsed;
   const restoredPlantCount = Math.floor(totalElapsed / 5000);
   for (let i = 0; i < restoredPlantCount; i++) addPlant();
   plantCount = restoredPlantCount;
 
-  // Update timer
   timerDisplay.textContent = formatTime(totalElapsed);
 
   if (savedStart) {
